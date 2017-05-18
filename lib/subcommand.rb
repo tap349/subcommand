@@ -151,7 +151,7 @@ module Subcommands
   # special case of "help command" so we print help of command - git style (3)
   # in all invalid cases print global help
   # @return command name if relevant
-  def opt_parse
+  def opt_parse argv = ARGV
     # if user has not defined global, we need to create it
     @command_name = nil
     if !defined? @global
@@ -169,11 +169,9 @@ module Subcommands
     else
     end
     @global.order!
-    cmd = ARGV.shift
+    cmd = argv.shift
     if cmd
-      #$stderr.puts "Command: #{cmd}, args:#{ARGV}, #{@commands.keys} "
       sc = @commands[cmd]
-      #puts "sc: #{sc}: #{@commands}"
       unless sc
         # see if an alias exists
         sc, cmd = _check_alias cmd
@@ -184,9 +182,8 @@ module Subcommands
         sc.call.order!
       else
         # else if help <command> then print its help GIT style (3)
-        if !ARGV.empty? && cmd == "help"
-          cmd = ARGV.shift
-          #$stderr.puts " 110 help #{cmd}"
+        if !argv.empty? && cmd == "help"
+          cmd = argv.shift
           sc = @commands[cmd]
           # if valid command print help, else print global help
           unless sc
@@ -219,14 +216,11 @@ module Subcommands
   end
   def _check_alias cmd
     alas = @aliases[cmd]
-    #$stderr.puts "195 alas: #{alas} "
     if alas
       case alas
       when Array
         cmd = alas.shift
-        #$stderr.puts "Array cmd: #{cmd} "
-        ARGV.unshift alas.shift unless alas.empty?
-        #$stderr.puts "ARGV  #{ARGV} "
+        argv.unshift alas.shift unless alas.empty?
       else
         cmd = alas
       end
