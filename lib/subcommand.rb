@@ -75,7 +75,7 @@ module Subcommands
     opt = lambda { OptionParser.new do |opts|
       yield opts
       # append desc to banner in next line
-      opts.banner << "\n#{opts.description}\n" if opts.description
+      opts.banner += "\n#{opts.description}\n" if opts.description
     end }
     @commands[name.to_s] = opt
   end
